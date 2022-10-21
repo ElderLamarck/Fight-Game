@@ -45,3 +45,14 @@ body{
     background-color:red; 
     height:30px;
 }
+.positiontext{
+    position: absolute;
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+}

@@ -1,6 +1,7 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 const gravity = 1
+let notOVER = true
 
 const PLAYER_KEYS = {
     'a':{
@@ -133,7 +134,9 @@ player.draw()
 enemy.draw()
 
 function animate(){
-    window.requestAnimationFrame(animate)
+    if(notOVER){
+        window.requestAnimationFrame(animate)
+    }
     context.fillStyle = 'black'
     context.fillRect(0, 0, canvas.width, canvas.height)
     player.update()
@@ -192,14 +195,33 @@ function colisionATCK(Object1, Object2){
         Object1.atkbox.position.y <= Object2.position.y + Object2.height
 }
 
-let time = 59
+let time = 60
 function decreseTimer(){
-    if(time > 0){
+    if(time > 0 && notOVER){
         setTimeout(decreseTimer, 1000)
         time--
         document.querySelector('#timer').innerHTML = time
     }
 }
+function endGame(){
+    setTimeout(endGame, 1)
+    if(time === 0 && player.health === enemy.health){
+        document.querySelector('#displaytext').innerHTML = 'Tie'
+        document.querySelector('#displaytext').style.display = 'flex'
+        notOVER = false
+    }
+    else if(player.health <= 0){
+        document.querySelector('#displaytext').innerHTML = 'Player2 wins'
+        document.querySelector('#displaytext').style.display = 'flex'
+        notOVER = false
+    }
+    else if(enemy.health <= 0){
+        document.querySelector('#displaytext').innerHTML = 'Player1 wins'
+        document.querySelector('#displaytext').style.display = 'flex'
+        notOVER = false
+    }
+}
+endGame()
 decreseTimer()
 
 animate()
