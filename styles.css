@@ -1,0 +1,47 @@
+*{
+    box-sizing: border-box;
+}
+
+#timer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(96, 83, 83);
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 95vh;
+}
+.total{
+    position: relative; 
+    display: inline-block;
+}
+.box{
+    position: absolute;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 20px;
+}
+.health{
+    position: relative;
+    height:30px; 
+    width:100%;
+}
+.life{
+    position:absolute; 
+    background:yellow;
+    top:0;
+    bottom:0;
+    right:0;
+}
+.emptyHealth{
+    background-color:red; 
+    height:30px;
+}
