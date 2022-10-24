@@ -3,7 +3,7 @@ const context = canvas.getContext('2d')
 const gravity = 1
 let notOVER = true
 
-const PLAYER_KEYS = {
+const PLAYER1_KEYS = {
     'a':{
         pressed: false
 
@@ -18,7 +18,7 @@ const PLAYER_KEYS = {
         pressed: false
     }
 }
-const ENEMY_KEYS = {
+const PLAYER2_KEYS = {
     'ArrowLeft':{
         pressed: false
     },
@@ -97,7 +97,7 @@ class sprite {
     
 }
 
-const player = new sprite({
+const player1 = new sprite({
     position:{
         x: 0,
         y: 100
@@ -113,7 +113,7 @@ const player = new sprite({
     }
 })
 
-const enemy = new sprite({
+const player2 = new sprite({
     position:{
         x: 970,
         y: 100
@@ -130,8 +130,8 @@ const enemy = new sprite({
     }
 })
 
-player.draw()
-enemy.draw()
+player1.draw()
+player2.draw()
 
 function animate(){
     if(notOVER){
@@ -139,44 +139,52 @@ function animate(){
     }
     context.fillStyle = 'black'
     context.fillRect(0, 0, canvas.width, canvas.height)
-    player.update()
-    enemy.update()
+    player1.update()
+    player2.update()
 
-    player.velocity.x = 0
-    enemy.velocity.x = 0
+    player1.velocity.x = 0
+    player2.velocity.x = 0
 
-    if(PLAYER_KEYS.a.pressed && player.lastkey === 'a'){
-        player.velocity.x = -5
-    } else if(PLAYER_KEYS.d.pressed && player.lastkey === 'd'){
-        player.velocity.x = 5
-    } if(PLAYER_KEYS.w.pressed && !player.lockjump){
-        player.lockjump = true
-        player.velocity.y = -20
+    if(PLAYER1_KEYS.a.pressed && player1.lastkey === 'a'){
+        if(player1.position.x >= 0 ){
+            player1.velocity.x = -5
+        }
+    } else if(PLAYER1_KEYS.d.pressed && player1.lastkey === 'd'){
+        if(player1.position.x + player1.width <= canvas.width){
+            player1.velocity.x = 5
+        }
+    } if(PLAYER1_KEYS.w.pressed && !player1.lockjump){
+        player1.lockjump = true
+        player1.velocity.y = -20
     }
 
-    if(ENEMY_KEYS.ArrowLeft.pressed && enemy.lastkey === 'ArrowLeft'){
-        enemy.velocity.x = -5
-    } else if(ENEMY_KEYS.ArrowRight.pressed && enemy.lastkey === 'ArrowRight'){
-        enemy.velocity.x = 5
-    } if(ENEMY_KEYS.ArrowUp.pressed && !enemy.lockjump){
-        enemy.lockjump = true
-        enemy.velocity.y = -20
+    if(PLAYER2_KEYS.ArrowLeft.pressed && player2.lastkey === 'ArrowLeft'){
+        if(player2.position.x >= 0){
+            player2.velocity.x = -5
+        }
+    } else if(PLAYER2_KEYS.ArrowRight.pressed && player2.lastkey === 'ArrowRight'){
+        if(player2.position.x + player2.width <= canvas.width){
+            player2.velocity.x = 5
+        }
+    } if(PLAYER2_KEYS.ArrowUp.pressed && !player2.lockjump){
+        player2.lockjump = true
+        player2.velocity.y = -20
     }
 
     //detect colision
-    if(colisionATCK(player, enemy) && player.isAttacking){
-        enemy.health -= 10
-        document.querySelector('#player2Health').style.width = enemy.health + '%'
-        player.isAttacking = false
+    if(colisionATCK(player1, player2) && player1.isAttacking){
+        player2.health -= 10
+        document.querySelector('#player2Health').style.width = player2.health + '%'
+        player1.isAttacking = false
     }
-    if(colisionATCK(enemy, player) && enemy.isAttacking){
-        player.health -= 10
-        document.querySelector('#player1Health').style.width = player.health + '%'
-        enemy.isAttacking = false
+    if(colisionATCK(player2, player1) && player2.isAttacking){
+        player1.health -= 10
+        document.querySelector('#player1Health').style.width = player1.health + '%'
+        player2.isAttacking = false
     }
 
-    direction(player, enemy)
-    direction(enemy, player)
+    direction(player1, player2)
+    direction(player2, player1)
 
 }
 
@@ -204,54 +212,53 @@ function decreseTimer(){
     }
 }
 function endGame(){
-    setTimeout(endGame, 1)
-    if(time === 0 && player.health === enemy.health){
+    if(time === 0 && player1.health === player2.health){
         document.querySelector('#displaytext').innerHTML = 'Tie'
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false
     }
-    else if(player.health <= 0){
+    else if(player1.health <= 0){
         document.querySelector('#displaytext').innerHTML = 'Player2 wins'
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false
     }
-    else if(enemy.health <= 0){
+    else if(player2.health <= 0){
         document.querySelector('#displaytext').innerHTML = 'Player1 wins'
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false
     }
+    setTimeout(endGame, 1)
 }
 endGame()
 decreseTimer()
-
 animate()
 
 window.addEventListener('keydown', event =>{
-    if(Object.keys(PLAYER_KEYS).includes(event.key)){
-        PLAYER_KEYS[event.key].pressed = true
+    if(Object.keys(PLAYER1_KEYS).includes(event.key)){
+        PLAYER1_KEYS[event.key].pressed = true
         if(event.key !== 'w' && event.key !== 's'){
-            player.lastkey = event.key
+            player1.lastkey = event.key
         }
         if(event.key === 's'){
-            player.attack()
+            player1.attack()
         }
     }
-    if(Object.keys(ENEMY_KEYS).includes(event.key)){
-        ENEMY_KEYS[event.key].pressed = true
+    if(Object.keys(PLAYER2_KEYS).includes(event.key)){
+        PLAYER2_KEYS[event.key].pressed = true
         if(event.key !== 'ArrowUp' && event.key !== 'ArrowDown'){
-            enemy.lastkey = event.key
+            player2.lastkey = event.key
         }
         if(event.key === 'ArrowDown'){
-            enemy.attack()
+            player2.attack()
         }
     }
 })
 
 window.addEventListener('keyup', event =>{
-    if(Object.keys(PLAYER_KEYS).includes(event.key)){
-        PLAYER_KEYS[event.key].pressed = false
+    if(Object.keys(PLAYER1_KEYS).includes(event.key)){
+        PLAYER1_KEYS[event.key].pressed = false
     }
-    if(Object.keys(ENEMY_KEYS).includes(event.key)){
-        ENEMY_KEYS[event.key].pressed = false
+    if(Object.keys(PLAYER2_KEYS).includes(event.key)){
+        PLAYER2_KEYS[event.key].pressed = false
     }
 })
