@@ -147,7 +147,7 @@ function animate(){
     context.fillRect(0, 0, canvas.width, canvas.height)
     player1.update()
     player2.update()
-    
+
     if(player1.position.y + player1.height >= canvas.height
         || player1.position.x <= 0 
         || player1.position.x + player1.width >= canvas.width){
@@ -196,7 +196,6 @@ function animate(){
             player2.isAttacking = false
             imunityFrame(player2, player1)
         }
-
         direction(player1, player2)
         direction(player2, player1)
 
@@ -214,15 +213,20 @@ function imunityFrame(attacker, victim){
         victim.velocity.x += 90
         victim.velocity.y -= 20
     }
-    else if(attacker.atkbox.offset.x > 0){
+    else if(attacker.atkbox.offset.x >= 0){
         victim.velocity.x -= 90
         victim.velocity.y -= 20
     }
 }
 
 function direction(Object1, Object2){
-    if((Object1.position.x + Object1.width)/2 >= (Object2.position.x + Object2.width)/2){
+    if((Object1.position.x + Object1.width)/2 > (Object2.position.x + Object2.width)/2){
         Object1.atkbox.offset.x = 50
+    } 
+    if((Object1.position.x + Object1.width)/2 == (Object2.position.x + Object2.width)/2){
+        if(Object1.position.x > canvas.width/2){
+            Object1.atkbox.offset.x = 50
+        }
     } else {
         Object1.atkbox.offset.x = 0
     }
