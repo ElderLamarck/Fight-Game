@@ -147,19 +147,19 @@ function animate(){
     context.fillRect(0, 0, canvas.width, canvas.height)
     player1.update()
     player2.update()
+    
+    if(player1.position.y + player1.height >= canvas.height
+        || player1.position.x <= 0 
+        || player1.position.x + player1.width >= canvas.width){
+        player1.velocity.x = 0
+    }
+    if(player2.position.y + player2.height >= canvas.height
+        || player2.position.x <= 0 
+        || player2.position.x + player2.width >= canvas.width){
+        player2.velocity.x = 0
+    }
 
     if(notOVER){
-        if(player1.position.y + player1.height >= canvas.height
-            || player1.position.x <= 0 
-            || player1.position.x + player1.width >= canvas.width){
-            player1.velocity.x = 0
-        }
-        if(player2.position.y + player2.height >= canvas.height
-            || player2.position.x <= 0 
-            || player2.position.x + player2.width >= canvas.width){
-            player2.velocity.x = 0
-        }
-
         if(!player1.imune){
             if(PLAYER1_KEYS.a.pressed && player1.lastkey === 'a'){
                 player1.velocity.x = -7
