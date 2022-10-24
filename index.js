@@ -223,7 +223,7 @@ function direction(Object1, Object2){
     if((Object1.position.x + Object1.width)/2 > (Object2.position.x + Object2.width)/2){
         Object1.atkbox.offset.x = 50
     } 
-    if((Object1.position.x + Object1.width)/2 == (Object2.position.x + Object2.width)/2){
+    else if((Object1.position.x + Object1.width)/2 == (Object2.position.x + Object2.width)/2){
         if(Object1.position.x > canvas.width/2){
             Object1.atkbox.offset.x = 50
         }
