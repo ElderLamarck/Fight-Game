@@ -57,6 +57,7 @@ class sprite {
         }
         this.color = color
         this.isAttacking = false
+        this.imune = false
         this.health = 100
     }
 
@@ -85,6 +86,13 @@ class sprite {
         } else {
             this.velocity.y += gravity
         }
+
+        if(this.position.x + this.width >= canvas.width){
+            this.position.x = canvas.width - this.width
+        }
+        else if(this.position.x <= 0){
+            this.position.x = 0
+        }
         
     }
 
@@ -99,14 +107,14 @@ class sprite {
 
 const player1 = new sprite({
     position:{
-        x: 0,
+        x: 5,
         y: 100
     },
     velocity:{
         x: 0,
         y: 10
     },
-    color: 'yellow',
+    color: 'red',
     offset:{
         x: 0,
         y: 0
@@ -134,58 +142,82 @@ player1.draw()
 player2.draw()
 
 function animate(){
-    if(notOVER){
-        window.requestAnimationFrame(animate)
-    }
+    window.requestAnimationFrame(animate)
     context.fillStyle = 'black'
     context.fillRect(0, 0, canvas.width, canvas.height)
     player1.update()
     player2.update()
 
-    player1.velocity.x = 0
-    player2.velocity.x = 0
-
-    if(PLAYER1_KEYS.a.pressed && player1.lastkey === 'a'){
-        if(player1.position.x >= 0 ){
-            player1.velocity.x = -5
+    if(notOVER){
+        if(player1.position.y + player1.height >= canvas.height
+            || player1.position.x <= 0 
+            || player1.position.x + player1.width >= canvas.width){
+            player1.velocity.x = 0
         }
-    } else if(PLAYER1_KEYS.d.pressed && player1.lastkey === 'd'){
-        if(player1.position.x + player1.width <= canvas.width){
-            player1.velocity.x = 5
+        if(player2.position.y + player2.height >= canvas.height
+            || player2.position.x <= 0 
+            || player2.position.x + player2.width >= canvas.width){
+            player2.velocity.x = 0
         }
-    } if(PLAYER1_KEYS.w.pressed && !player1.lockjump){
-        player1.lockjump = true
-        player1.velocity.y = -20
-    }
 
-    if(PLAYER2_KEYS.ArrowLeft.pressed && player2.lastkey === 'ArrowLeft'){
-        if(player2.position.x >= 0){
-            player2.velocity.x = -5
+        if(!player1.imune){
+            if(PLAYER1_KEYS.a.pressed && player1.lastkey === 'a'){
+                player1.velocity.x = -7
+            } else if(PLAYER1_KEYS.d.pressed && player1.lastkey === 'd'){
+                player1.velocity.x = 7
+            } if(PLAYER1_KEYS.w.pressed && !player1.lockjump){
+                player1.lockjump = true
+                player1.velocity.y = -20
+            }
         }
-    } else if(PLAYER2_KEYS.ArrowRight.pressed && player2.lastkey === 'ArrowRight'){
-        if(player2.position.x + player2.width <= canvas.width){
-            player2.velocity.x = 5
+
+        if(!player2.imune){
+            if(PLAYER2_KEYS.ArrowLeft.pressed && player2.lastkey === 'ArrowLeft'){
+                player2.velocity.x = -7
+            } else if(PLAYER2_KEYS.ArrowRight.pressed && player2.lastkey === 'ArrowRight'){
+                player2.velocity.x = 7
+            } if(PLAYER2_KEYS.ArrowUp.pressed && !player2.lockjump){
+                player2.lockjump = true
+                player2.velocity.y = -20
+            }
         }
-    } if(PLAYER2_KEYS.ArrowUp.pressed && !player2.lockjump){
-        player2.lockjump = true
-        player2.velocity.y = -20
-    }
 
-    //detect colision
-    if(colisionATCK(player1, player2) && player1.isAttacking){
-        player2.health -= 10
-        document.querySelector('#player2Health').style.width = player2.health + '%'
-        player1.isAttacking = false
-    }
-    if(colisionATCK(player2, player1) && player2.isAttacking){
-        player1.health -= 10
-        document.querySelector('#player1Health').style.width = player1.health + '%'
-        player2.isAttacking = false
-    }
+        //detect colision
+        if(colisionATCK(player1, player2) && player1.isAttacking && !player2.imune){
+            player2.health -= 10
+            document.querySelector('#player2Health').style.width = player2.health + '%'
+            player1.isAttacking = false
+            player2.imune = true
+            imunityFrame(player1, player2)
+        }
+        if(colisionATCK(player2, player1) && player2.isAttacking && !player1.imune){
+            player1.health -= 10
+            document.querySelector('#player1Health').style.width = player1.health + '%'
+            player2.isAttacking = false
+            imunityFrame(player2, player1)
+        }
 
-    direction(player1, player2)
-    direction(player2, player1)
+        direction(player1, player2)
+        direction(player2, player1)
 
+    }
+}
+function imunityFrame(attacker, victim){
+    let originalColor = victim.color
+    victim.imune = true
+    victim.color = 'green'
+        setTimeout(()=>{
+            victim.imune = false
+            victim.color = originalColor
+        }, 250)
+    if(attacker.atkbox.offset.x <= 0){
+        victim.velocity.x += 90
+        victim.velocity.y -= 20
+    }
+    else if(attacker.atkbox.offset.x > 0){
+        victim.velocity.x -= 90
+        victim.velocity.y -= 20
+    }
 }
 
 function direction(Object1, Object2){
@@ -217,12 +249,12 @@ function endGame(){
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false
     }
-    else if(player1.health <= 0){
+    else if(time === 0 || player1.health <= 0){
         document.querySelector('#displaytext').innerHTML = 'Player2 wins'
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false
     }
-    else if(player2.health <= 0){
+    else if(time === 0 || player2.health <= 0){
         document.querySelector('#displaytext').innerHTML = 'Player1 wins'
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false
