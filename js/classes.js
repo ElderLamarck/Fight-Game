@@ -4,7 +4,6 @@ class sprite {
         this.velocity = velocity
         this.height = 150
         this.width = 50
-        this.lockjump = false
         this.lastkey
         this.atkbox = {
             position: {
@@ -18,6 +17,8 @@ class sprite {
         this.color = color
         this.isAttacking = false
         this.imune = false
+        this.lockjump = false
+        this.lockdash = false
         this.health = 100
     }
 
@@ -27,9 +28,20 @@ class sprite {
 
         //atkbox
         if(this.isAttacking){
-            CONTEXT.fillStyle = 'purple'
-            CONTEXT.fillRect(this.atkbox.position.x, this.atkbox.position.y, 
-                            this.atkbox.width, this.atkbox.height)
+            if(this.position.y+this.height === CANVAS.height){
+                CONTEXT.fillStyle = 'purple'
+                CONTEXT.fillRect(this.atkbox.position.x, 
+                                this.atkbox.position.y, 
+                                this.atkbox.width, 
+                                this.atkbox.height)
+            }else{
+                CONTEXT.fillStyle = 'purple'
+                CONTEXT.fillRect(this.atkbox.position.x, 
+                                this.atkbox.position.y + (this.height - this.atkbox.height), 
+                                this.atkbox.width, 
+                                this.atkbox.height)
+            }
+        
         }
     }
 
@@ -40,10 +52,17 @@ class sprite {
 
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
+
+        if(this.position.x <= 0 || this.position.x + this.width >= CANVAS.width){
+            this.velocity.x = 0
+        }
+
         if(this.position.y + this.height >= CANVAS.height){
+            this.velocity.x = 0
             this.velocity.y = 0
             this.position.y = CANVAS.height - this.height
             this.lockjump = false
+            this.lockdash = false
         } else {
             this.velocity.y += GRAVITY
         }

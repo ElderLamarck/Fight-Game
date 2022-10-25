@@ -1,8 +1,3 @@
-CANVAS.width = TOTALWIDTH
-CANVAS.height = TOTALHEIGHT
-
-let notOVER = true
-
 CONTEXT.fillRect(0, 0, CANVAS.width, CANVAS.height)
 
 endGame()

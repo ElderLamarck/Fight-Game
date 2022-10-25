@@ -5,37 +5,41 @@ function animate(){
     player1.update()
     player2.update()
 
-    if(player1.position.y + player1.height >= CANVAS.height
-        || player1.position.x <= 0 
-        || player1.position.x + player1.width >= CANVAS.width){
-        player1.velocity.x = 0
-    }
-    if(player2.position.y + player2.height >= CANVAS.height
-        || player2.position.x <= 0 
-        || player2.position.x + player2.width >= CANVAS.width){
-        player2.velocity.x = 0
-    }
-
     if(notOVER){
         if(!player1.imune){
             if(PLAYER1_KEYS.a.pressed && player1.lastkey === 'a'){
-                player1.velocity.x = -7
-            } else if(PLAYER1_KEYS.d.pressed && player1.lastkey === 'd'){
-                player1.velocity.x = 7
-            } if(PLAYER1_KEYS.w.pressed && !player1.lockjump){
+                player1.velocity.x = -1 * HORIZONTALDESLOCATION
+            } 
+            if(PLAYER1_KEYS.d.pressed && player1.lastkey === 'd'){
+                player1.velocity.x = HORIZONTALDESLOCATION
+            } 
+            if(PLAYER1_KEYS.w.pressed && !player1.lockjump){
                 player1.lockjump = true
-                player1.velocity.y = -20
+                player1.velocity.y = VERTICALDESLOCATION
+            }
+            if(PLAYER1_KEYS.e.pressed && player1.velocity.y > 0 && !player1.lockdash){
+                activationDash(player1, 'right')
+            }
+            if(PLAYER1_KEYS.q.pressed && player1.velocity.y > 0 && !player1.lockdash){
+                activationDash(player1, 'left')
             }
         }
 
         if(!player2.imune){
             if(PLAYER2_KEYS.ArrowLeft.pressed && player2.lastkey === 'ArrowLeft'){
-                player2.velocity.x = -7
+                player2.velocity.x = -1 * HORIZONTALDESLOCATION
             } else if(PLAYER2_KEYS.ArrowRight.pressed && player2.lastkey === 'ArrowRight'){
-                player2.velocity.x = 7
-            } if(PLAYER2_KEYS.ArrowUp.pressed && !player2.lockjump){
+                player2.velocity.x = HORIZONTALDESLOCATION
+            } 
+            if(PLAYER2_KEYS.ArrowUp.pressed && !player2.lockjump){
                 player2.lockjump = true
-                player2.velocity.y = -20
+                player2.velocity.y = VERTICALDESLOCATION
+            }
+            if(PLAYER2_KEYS.PageDown.pressed && player2.velocity.y > 0 && !player2.lockdash){
+                activationDash(player2, 'right')
+            }
+            if(PLAYER2_KEYS.PageUp.pressed && player2.velocity.y > 0 && !player2.lockdash){
+                activationDash(player2, 'left')
             }
         }
 
@@ -57,6 +61,18 @@ function animate(){
         direction(player2, player1)
 
     }
+}
+
+function activationDash(Object, direction){
+    Object.lockdash = true
+    Object.lockjump = false
+    if(direction === 'right'){
+        Object.position.x += 250
+    }
+    else if(direction === 'left'){
+        Object.position.x -= 250
+    }
+    Object.velocity.y = 0
 }
 
 function imunityFrame(attacker, victim){
@@ -100,7 +116,6 @@ function colisionATCK(Object1, Object2){
         Object1.atkbox.position.y <= Object2.position.y + Object2.height
 }
 
-let time = 60
 function decreseTimer(){
     if(time > 0 && notOVER){
         setTimeout(decreseTimer, 1000)
@@ -115,12 +130,22 @@ function endGame(){
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false
     }
-    else if(time === 0 || player1.health <= 0){
+    else if(time === 0 && player1.health < player2.health){
         document.querySelector('#displaytext').innerHTML = 'Player2 wins'
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false
     }
-    else if(time === 0 || player2.health <= 0){
+    else if(time === 0 && player2.health < player1.health){
+        document.querySelector('#displaytext').innerHTML = 'Player1 wins'
+        document.querySelector('#displaytext').style.display = 'flex'
+        notOVER = false
+    }
+    else if(player1.health <= 0){
+        document.querySelector('#displaytext').innerHTML = 'Player2 wins'
+        document.querySelector('#displaytext').style.display = 'flex'
+        notOVER = false
+    }
+    else if(player2.health <= 0){
         document.querySelector('#displaytext').innerHTML = 'Player1 wins'
         document.querySelector('#displaytext').style.display = 'flex'
         notOVER = false

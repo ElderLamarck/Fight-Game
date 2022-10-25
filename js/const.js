@@ -1,8 +1,18 @@
 const CANVAS = document.querySelector('canvas')
 const CONTEXT = CANVAS.getContext('2d')
-const GRAVITY = 1
+const GRAVITY = 1.5
 const TOTALWIDTH = 1024
 const TOTALHEIGHT = 576
+
+let time = 5
+
+HORIZONTALDESLOCATION = 5
+VERTICALDESLOCATION = -25
+
+CANVAS.width = TOTALWIDTH
+CANVAS.height = TOTALHEIGHT
+
+let notOVER = true
 
 const PLAYER1_KEYS = {
     'a':{
@@ -16,6 +26,12 @@ const PLAYER1_KEYS = {
         pressed: false
     },
     's':{
+        pressed: false
+    },
+    'q':{
+        pressed: false
+    },
+    'e':{
         pressed: false
     }
 }
@@ -31,6 +47,12 @@ const PLAYER2_KEYS = {
         pressed: false
     },
     'ArrowDown':{
+        pressed: false
+    },
+    'PageUp':{
+        pressed: false
+    },
+    'PageDown':{
         pressed: false
     }
 }
