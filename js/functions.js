@@ -2,6 +2,7 @@ function animate(){
     window.requestAnimationFrame(animate)
     CONTEXT.fillStyle = 'black'
     CONTEXT.fillRect(0, 0, CANVAS.width, CANVAS.height)
+    background.update()
     player1.update()
     player2.update()
 
@@ -14,8 +15,8 @@ function animate(){
                 player1.velocity.x = HORIZONTALDESLOCATION
             } 
             if(PLAYER1_KEYS.w.pressed && !player1.lockjump){
-                player1.lockjump = true
                 player1.velocity.y = VERTICALDESLOCATION
+                player1.lockjump = true
             }
             if(PLAYER1_KEYS.e.pressed && player1.velocity.y > 0 && !player1.lockdash){
                 activationDash(player1, 'right')
@@ -28,12 +29,13 @@ function animate(){
         if(!player2.imune){
             if(PLAYER2_KEYS.ArrowLeft.pressed && player2.lastkey === 'ArrowLeft'){
                 player2.velocity.x = -1 * HORIZONTALDESLOCATION
-            } else if(PLAYER2_KEYS.ArrowRight.pressed && player2.lastkey === 'ArrowRight'){
+            } 
+            if(PLAYER2_KEYS.ArrowRight.pressed && player2.lastkey === 'ArrowRight'){
                 player2.velocity.x = HORIZONTALDESLOCATION
             } 
             if(PLAYER2_KEYS.ArrowUp.pressed && !player2.lockjump){
-                player2.lockjump = true
                 player2.velocity.y = VERTICALDESLOCATION
+                player2.lockjump = true
             }
             if(PLAYER2_KEYS.PageDown.pressed && player2.velocity.y > 0 && !player2.lockdash){
                 activationDash(player2, 'right')
@@ -66,13 +68,13 @@ function animate(){
 function activationDash(Object, direction){
     Object.lockdash = true
     Object.lockjump = false
+    Object.velocity.y = 0
     if(direction === 'right'){
         Object.position.x += 250
     }
     else if(direction === 'left'){
         Object.position.x -= 250
     }
-    Object.velocity.y = 0
 }
 
 function imunityFrame(attacker, victim){

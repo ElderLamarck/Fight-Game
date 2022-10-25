@@ -3,8 +3,9 @@ const CONTEXT = CANVAS.getContext('2d')
 const GRAVITY = 1.5
 const TOTALWIDTH = 1024
 const TOTALHEIGHT = 576
+const VALIDHEIGHT = 556
 
-let time = 5
+let time = 60
 
 HORIZONTALDESLOCATION = 5
 VERTICALDESLOCATION = -25
@@ -57,7 +58,7 @@ const PLAYER2_KEYS = {
     }
 }
 
-const player1 = new sprite({
+const player1 = new Fighter({
     position:{
         x: 5,
         y: 100
@@ -73,7 +74,7 @@ const player1 = new sprite({
     }
 })
 
-const player2 = new sprite({
+const player2 = new Fighter({
     position:{
         x: 970,
         y: 100
@@ -88,4 +89,12 @@ const player2 = new sprite({
         x: 50,
         y: 0
     }
+})
+
+const background = new Sprite({
+    position:{
+        x:0,
+        y:0
+    },
+    imageSrc:'./images/background.png'
 })
